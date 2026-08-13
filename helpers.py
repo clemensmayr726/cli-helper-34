@@ -1,28 +1,22 @@
-def get_user_input(prompt: str) -> str:
-    user_input = input(prompt).strip()
+def is_valid_input(user_input):
     if not user_input:
-        raise ValueError('Input cannot be empty.')
-    return user_input
-
-
-def validate_input(user_input: str) -> bool:
-    # Add basic validation logic here
+        return False
+    if not isinstance(user_input, str):
+        return False
     if len(user_input) < 3:
-        print('Input is too short. It must be at least 3 characters.')
         return False
     return True
 
-
-def process_input():
+def process_user_input():
     while True:
-        try:
-            user_input = get_user_input('Please enter some input: ')
-            if validate_input(user_input):
-                print(f'Processing input: {user_input}')
-                break
-        except ValueError as e:
-            print(e)
-
+        user_input = input('Enter something (type exit to quit): ')
+        if user_input.lower() == 'exit':
+            print('Exiting the program.')
+            break
+        if not is_valid_input(user_input):
+            print('Invalid input. Please enter at least 3 characters.')
+            continue
+        print(f'Processing input: {user_input}')
 
 if __name__ == '__main__':
-    process_input()
+    process_user_input()
