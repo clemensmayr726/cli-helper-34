@@ -1,18 +1,22 @@
-# logger.py
 import logging
+import os
+from logging.handlers import RotatingFileHandler
 
-# Configure the logger for the application
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-logger = logging.getLogger(__name__)
+def setup_logger(log_file='app.log', max_bytes=10*1024*1024, backup_count=3):
+    logger = logging.getLogger('my_logger')
+    logger.setLevel(logging.DEBUG)
 
-# Log a message at each severity level
+    # Create a rotating file handler
+    os.makedirs(os.path.dirname(log_file), exist_ok=True)
+    handler = RotatingFileHandler(log_file, maxBytes=max_bytes, backupCount=backup_count)
+    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+    handler.setFormatter(formatter)
 
-def log_messages():
-    logger.debug('This is a debug message')
-    logger.info('This is an info message')
-    logger.warning('This is a warning message')
-    logger.error('This is an error message')
-    logger.critical('This is a critical message')
+    # Add the handler to the logger
+    logger.addHandler(handler)
+    return logger
 
+# Example usage
 if __name__ == '__main__':
-    log_messages()
+    logger = setup_logger()
+    logger.info('Logger setup complete.')
