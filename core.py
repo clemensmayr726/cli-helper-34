@@ -1,27 +1,32 @@
-import json
+import sys
 
-class CustomError(Exception):
-    pass
+class InputValidator:
+    @staticmethod
+    def validate_integer(value):
+        try:
+            val = int(value)
+            return val
+        except ValueError:
+            raise ValueError(f"Invalid integer value: {value}")
 
-def risky_operation(data):
-    if not isinstance(data, dict):
-        raise CustomError('Input must be a dictionary')
-    if 'key' not in data:
-        raise CustomError('Key not found in input dictionary')
-    return data['key']
+    @staticmethod
+    def validate_string(value):
+        if isinstance(value, str) and value.strip():
+            return value.strip()
+        else:
+            raise ValueError(f"Invalid string value: {value}")
 
-def process_data(json_data):
-    try:
-        data = json.loads(json_data)
-        result = risky_operation(data)
-        print(f'Processed result: {result}')
-    except json.JSONDecodeError:
-        print('Error: Invalid JSON format')
-    except CustomError as e:
-        print(f'Custom Error: {e}')
-    except Exception as e:
-        print(f'Unexpected Error: {e}')
+def main_processing_loop():
+    while True:
+        user_input = input("Enter a command (or 'exit' to quit): ").strip()
+        if user_input.lower() == 'exit':
+            print("Exiting program...")
+            break
+        try:
+            validated_input = InputValidator.validate_string(user_input)
+            print(f"Processing command: {validated_input}")
+        except ValueError as e:
+            print(e)
 
 if __name__ == '__main__':
-    sample_json = '{"key": "value"}'
-    process_data(sample_json)
+    main_processing_loop()
