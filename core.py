@@ -1,32 +1,32 @@
-import sys
+import json
+import os
+from typing import Any, Dict
 
-class InputValidator:
-    @staticmethod
-    def validate_integer(value):
-        try:
-            val = int(value)
-            return val
-        except ValueError:
-            raise ValueError(f"Invalid integer value: {value}")
+DEFAULT_CONFIG = {
+    'host': 'localhost',
+    'port': 8080,
+    'debug': False
+}
 
-    @staticmethod
-    def validate_string(value):
-        if isinstance(value, str) and value.strip():
-            return value.strip()
-        else:
-            raise ValueError(f"Invalid string value: {value}")
+class ConfigLoader:
+    def __init__(self, config_file: str) -> None:
+        self.config_file = config_file
+        self.config = self.load_config()
 
-def main_processing_loop():
-    while True:
-        user_input = input("Enter a command (or 'exit' to quit): ").strip()
-        if user_input.lower() == 'exit':
-            print("Exiting program...")
-            break
-        try:
-            validated_input = InputValidator.validate_string(user_input)
-            print(f"Processing command: {validated_input}")
-        except ValueError as e:
-            print(e)
+    def load_config(self) -> Dict[str, Any]:
+        # Load configuration from JSON file; fallback to defaults
+        if os.path.isfile(self.config_file):
+            with open(self.config_file, 'r') as file:
+                user_config = json.load(file)
+                return {**DEFAULT_CONFIG, **user_config}
+        return DEFAULT_CONFIG
+
+    def get(self, key: str, default: Any = None) -> Any:
+        return self.config.get(key, default)
+
+    def __repr__(self) -> str:
+        return f"ConfigLoader(config={self.config})"
 
 if __name__ == '__main__':
-    main_processing_loop()
+    config_loader = ConfigLoader('config.json')
+    print(config_loader)
