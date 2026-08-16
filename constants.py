@@ -1,21 +1,32 @@
-import json
-import os
+import time
+import random
 
-DEFAULT_CONFIG = {
-    'setting_1': 'default_value_1',
-    'setting_2': 'default_value_2',
-    'setting_3': 10
-}
+RETRY_ATTEMPTS = 3
+DELAY_SECONDS = 2
 
-def load_config(custom_config_path=None):
-    """Load configuration from a JSON file, falling back to defaults."""
-    config = DEFAULT_CONFIG.copy()  # Start with defaults
-    
-    if custom_config_path and os.path.exists(custom_config_path):
-        with open(custom_config_path, 'r') as config_file:
+class NetworkError(Exception):
+    pass
+
+def retry_on_failure(func):
+    """
+    Decorator to retry a network operation if it fails.
+    """
+    def wrapper(*args, **kwargs):
+        for attempt in range(RETRY_ATTEMPTS):
             try:
-                custom_config = json.load(config_file)
-                config.update(custom_config)  # Update with custom values
-            except json.JSONDecodeError as e:
-                raise ValueError(f'Error loading JSON config: {e}')  
-    return config
+                return func(*args, **kwargs)
+            except NetworkError as e:
+                if attempt < RETRY_ATTEMPTS - 1:
+                    time.sleep(DELAY_SECONDS * (attempt + 1))  # Exponential backoff
+                else:
+                    raise e
+    return wrapper
+
+@retry_on_failure
+def network_operation():
+    """
+    Simulated network operation that may fail.
+    """
+    if random.choice([True, False]):
+        raise NetworkError("Network failure")
+    return "Network operation succeeded!"
