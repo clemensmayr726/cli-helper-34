@@ -1,43 +1,32 @@
-from typing import List, Dict
+import os
+import json
+import shutil
 
 
-def sort_dict_by_value(input_dict: Dict[str, int]) -> List[Dict[str, int]]:
-    """
-    Sorts a dictionary by its values in descending order.
-    
-    Args:
-        input_dict (Dict[str, int]): The dictionary to be sorted.
-    
-    Returns:
-        List[Dict[str, int]]: A list of dictionaries sorted by value.
-    """
-    return sorted(input_dict.items(), key=lambda item: item[1], reverse=True)
+def read_json(file_path):
+    """Reads a JSON file and returns the content as a dictionary."""
+    if not os.path.exists(file_path):
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
+    with open(file_path, 'r') as file:
+        return json.load(file)
 
 
-def filter_even_numbers(numbers: List[int]) -> List[int]:
-    """
-    Filters out even numbers from a list.
-    
-    Args:
-        numbers (List[int]): The list of integers to be filtered.
-    
-    Returns:
-        List[int]: A list containing only the even numbers.
-    """
-    return [num for num in numbers if num % 2 == 0]
+def write_json(file_path, data):
+    """Writes a dictionary to a JSON file."""
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)
 
 
-def merge_dicts(dict1: Dict[str, str], dict2: Dict[str, str]) -> Dict[str, str]:
-    """
-    Merges two dictionaries into one. If the same key exists in both, the value from dict2 is taken.
-    
-    Args:
-        dict1 (Dict[str, str]): The first dictionary.
-        dict2 (Dict[str, str]): The second dictionary.
-    
-    Returns:
-        Dict[str, str]: The merged dictionary.
-    """
-    merged = dict1.copy()
-    merged.update(dict2)
-    return merged
+def copy_file(src, dst):
+    """Copies a file from src to dst."""
+    if not os.path.exists(src):
+        raise FileNotFoundError(f"The source file {src} does not exist.")
+    shutil.copy(src, dst)
+
+
+def delete_file(file_path):
+    """Deletes the specified file if it exists."""
+    if os.path.exists(file_path):
+        os.remove(file_path)
+    else:
+        raise FileNotFoundError(f"The file {file_path} does not exist.")
