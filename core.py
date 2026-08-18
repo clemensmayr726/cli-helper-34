@@ -1,32 +1,45 @@
 import json
-import os
-from typing import Any, Dict
+from typing import Any, Dict, List
 
-DEFAULT_CONFIG = {
-    'host': 'localhost',
-    'port': 8080,
-    'debug': False
-}
+def load_json(file_path: str) -> Dict[str, Any]:
+    """
+    Load a JSON file and return its content as a dictionary.
+    :param file_path: Path to the JSON file.
+    :return: Dictionary containing the JSON data.
+    """
+    with open(file_path, 'r') as file:
+        return json.load(file)
 
-class ConfigLoader:
-    def __init__(self, config_file: str) -> None:
-        self.config_file = config_file
-        self.config = self.load_config()
 
-    def load_config(self) -> Dict[str, Any]:
-        # Load configuration from JSON file; fallback to defaults
-        if os.path.isfile(self.config_file):
-            with open(self.config_file, 'r') as file:
-                user_config = json.load(file)
-                return {**DEFAULT_CONFIG, **user_config}
-        return DEFAULT_CONFIG
+def save_json(file_path: str, data: Dict[str, Any]) -> None:
+    """
+    Save data as a JSON file.
+    :param file_path: Path where to save the JSON file.
+    :param data: Dictionary to save as JSON.
+    """
+    with open(file_path, 'w') as file:
+        json.dump(data, file, indent=4)
 
-    def get(self, key: str, default: Any = None) -> Any:
-        return self.config.get(key, default)
 
-    def __repr__(self) -> str:
-        return f"ConfigLoader(config={self.config})"
+def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Merge two dictionaries and return the result.
+    :param dict1: The first dictionary.
+    :param dict2: The second dictionary.
+    :return: Merged dictionary.
+    """
+    merged = dict1.copy()
+    merged.update(dict2)
+    return merged
 
-if __name__ == '__main__':
-    config_loader = ConfigLoader('config.json')
-    print(config_loader)
+
+def flatten_list_of_dicts(list_of_dicts: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+    """
+    Flatten a list of dictionaries into a single dictionary per unique key.
+    :param list_of_dicts: List of dictionaries to flatten.
+    :return: A flattened list of dictionaries.
+    """
+    result = []
+    for d in list_of_dicts:
+        result.append({k: v for k, v in d.items()})
+    return result
