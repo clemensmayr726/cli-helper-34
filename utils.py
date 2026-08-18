@@ -1,42 +1,59 @@
-import json
-from typing import Any, Dict, List, Union
 
-def load_json(filepath: str) -> Union[Dict, List]:
+def factorial(n: int) -> int:
     """
-    Load a JSON file and return its content as a dictionary or list.
-    :param filepath: Path to the JSON file.
-    :return: Parsed JSON data as a dictionary or list.
+    Calculate the factorial of a non-negative integer.
+    
+    Args:
+        n (int): A non-negative integer whose factorial is to be calculated.
+    
+    Returns:
+        int: The factorial of the given integer.
     """
-    with open(filepath, 'r') as file:
-        return json.load(file)
-
-
-def dump_json(data: Union[Dict, List], filepath: str) -> None:
-    """
-    Dump data to a JSON file.
-    :param data: Data to be written to file, must be a dictionary or list.
-    :param filepath: Path to save the JSON file.
-    """
-    with open(filepath, 'w') as file:
-        json.dump(data, file, indent=4)
+    if n < 0:
+        raise ValueError("Input must be a non-negative integer.")
+    if n == 0:
+        return 1
+    result = 1
+    for i in range(1, n + 1):
+        result *= i
+    return result
 
 
-def merge_dicts(dict1: Dict[str, Any], dict2: Dict[str, Any]) -> Dict[str, Any]:
+def is_prime(num: int) -> bool:
     """
-    Merge two dictionaries. In case of conflicts, values from dict2 will overwrite those from dict1.
-    :param dict1: First dictionary.
-    :param dict2: Second dictionary.
-    :return: Merged dictionary with combined keys and values.
+    Check if a number is prime.
+    
+    Args:
+        num (int): The number to check for primality.
+    
+    Returns:
+        bool: True if the number is prime, False otherwise.
     """
-    merged = dict1.copy()  
-    merged.update(dict2)  
-    return merged
+    if num <= 1:
+        return False
+    for i in range(2, int(num**0.5) + 1):
+        if num % i == 0:
+            return False
+    return True
 
 
-def flatten_list(nested_list: List[List[Any]]) -> List[Any]:
+def fibonacci(n: int) -> list[int]:
     """
-    Flatten a nested list.
-    :param nested_list: List of lists to be flattened.
-    :return: A single list containing all the elements.
+    Generate a list of Fibonacci numbers up to the n-th term.
+    
+    Args:
+        n (int): The number of terms to generate.
+    
+    Returns:
+        list[int]: A list containing the Fibonacci sequence up to the n-th term.
     """
-    return [item for sublist in nested_list for item in sublist]
+    if n <= 0:
+        return []
+    elif n == 1:
+        return [0]
+    elif n == 2:
+        return [0, 1]
+    fib_sequence = [0, 1]
+    for i in range(2, n):
+        fib_sequence.append(fib_sequence[-1] + fib_sequence[-2])
+    return fib_sequence
