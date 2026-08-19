@@ -1,23 +1,35 @@
-import sys
+import time
 
-def validate_input(user_input):
-    if not user_input.isdigit():
-        print("Error: Input must be a number.")
-        return False
-    if int(user_input) < 1:
-        print("Error: Input must be a positive integer.")
-        return False
-    return True
+class DataProcessor:
+    def __init__(self, data):
+        self.data = data
+        self.cache = {}
 
-def process_data(data):
-    result = int(data) * 2  # Example processing: doubling the input
-    print(f"Processed result: {result}")
+    def process_data(self):
+        results = []
+        for item in self.data:
+            result = self._process_item(item)
+            results.append(result)
+        return results
 
+    def _process_item(self, item):
+        if item in self.cache:
+            return self.cache[item]
+        # Simulate an expensive operation
+        time.sleep(0.1)
+        processed = self._expensive_operation(item)
+        self.cache[item] = processed
+        return processed
+
+    def _expensive_operation(self, item):
+        # Just a mockup of an expensive operation
+        return item * item
+
+# Example usage
 if __name__ == '__main__':
-    while True:
-        user_input = input("Enter a positive integer (or 'exit' to quit): ").strip()
-        if user_input.lower() == 'exit':
-            print("Exiting program.")
-            sys.exit(0)
-        if validate_input(user_input):
-            process_data(user_input)
+    processor = DataProcessor(range(10))
+    start_time = time.time()
+    results = processor.process_data()
+    end_time = time.time()
+    print(results)
+    print(f'Processing time: {end_time - start_time}')
